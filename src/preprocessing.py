@@ -29,6 +29,9 @@ def load_and_preprocess_data(movies_path, ratings_path):
     movies["year"]  = movies["title"].str.extract(r"\((\d{4})\)$").astype(float)
     movies["title"] = movies["title"].str.replace(r"\s*\(\d{4}\)$", "", regex=True).str.strip()
 
+    # Fix article at the end of titles (e.g., "Matrix, The" -> "The Matrix")
+    movies["title"] = movies["title"].str.replace(r'(?i)^(.*),\s*(The|A|An)$', r'\2 \1', regex=True)
+
     # Clean Ratings
     ratings["timestamp"] = pd.to_datetime(ratings["timestamp"], unit="s")
     ratings = (ratings
