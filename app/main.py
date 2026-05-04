@@ -207,7 +207,7 @@ hr {
 
 # ─── Data & Models ────────────────────────────────────────────────────────────
 @st.cache_data
-def load_data_v2():
+def load_data_v2(force_bust="v3"):
     base = os.path.dirname(__file__)
     return load_and_preprocess_data(
         os.path.join(base, "..", "data", "raw", "movies.csv"),
@@ -273,7 +273,7 @@ def get_movie_poster_v6(title: str, api_key: str) -> str:
 
 with st.spinner("🔄  Loading data & training models…"):
     try:
-        movies, ratings, train, test = load_data_v2()
+        movies, ratings, train, test = load_data_v2("v4")
         content_model, collab_model, hybrid_model = train_models(movies, train)
     except Exception as e:
         st.error(f"**Data load error.** Make sure `movies.csv` and `ratings.csv` are in `data/raw/`.\n\n`{e}`")
