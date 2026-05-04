@@ -233,8 +233,8 @@ def fetch_poster(title: str, api_key: str) -> str:
     try:
         import base64
         import re
-        # Remove year in parentheses
-        clean = re.sub(r'\(\d{4}\)', '', title).strip()
+        # Remove everything after the first parenthesis (strips years AND foreign/alternate titles)
+        clean = title.split("(")[0].strip()
         # Fix "Movie, The" or "Movie, A" formatting from MovieLens
         match = re.search(r'^(.*),\s*(The|A|An)$', clean, flags=re.IGNORECASE)
         if match:
