@@ -226,7 +226,7 @@ def evaluate_models(_model, test):
     return run_full_evaluation(_model, test)
 
 @st.cache_data(ttl=86400)
-def get_movie_poster_v4(title: str, api_key: str) -> str:
+def get_movie_poster_v5(title: str, api_key: str) -> str:
     """Fetch movie poster and return as base64 data URI for inline embedding."""
     if not api_key:
         return ""
@@ -343,8 +343,17 @@ with st.sidebar:
     run_btn  = st.button("✨  Get Recommendations")
     eval_btn = st.button("📊  Evaluate Models")
 
-    # Hardcoded OMDb API Key
-    omdb_key = "6042e96b"
+    # ── OMDb API Key ──
+    st.markdown("---")
+    st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem;">🖼️ Movie Posters</div>', unsafe_allow_html=True)
+    omdb_key = st.text_input(
+        "OMDb API Key",
+        value="b6003d8a",
+        type="password",
+        placeholder="Paste your free key here…",
+        help="Get a FREE key at omdbapi.com — enables real movie poster images!",
+        label_visibility="collapsed"
+    )
 
     # ── Quick stats ──
     st.markdown("---")
@@ -408,7 +417,7 @@ def render_grid(recs, score_col, score_label, accent, max_score=1.0, api_key="")
             title = row['title']
 
             # Fetch poster
-            poster_url = get_movie_poster_v4(title, api_key) if api_key else ""
+            poster_url = get_movie_poster_v5(title, api_key) if api_key else ""
 
             if poster_url:
                 img_html = f'<img src="{poster_url}" style="width:100%;height:240px;object-fit:cover;display:block;border-radius:0;">'
