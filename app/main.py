@@ -226,7 +226,7 @@ def evaluate_models(_model, test):
     return run_full_evaluation(_model, test)
 
 @st.cache_data(ttl=86400)
-def get_movie_poster_v3(title: str, api_key: str) -> str:
+def get_movie_poster_v4(title: str, api_key: str) -> str:
     """Fetch movie poster and return as base64 data URI for inline embedding."""
     if not api_key:
         return ""
@@ -252,6 +252,8 @@ def get_movie_poster_v3(title: str, api_key: str) -> str:
             simpler = simpler.replace("Part II", "II").replace("Part III", "III").replace("Part 2", "II")
             simpler = re.sub(r' 2$', ' II', simpler)
             simpler = re.sub(r' 3$', ' III', simpler)
+            # Remove trailing 4-digit years without parentheses (e.g. "Fullmetal Alchemist 2018")
+            simpler = re.sub(r'\s+\d{4}$', '', simpler).strip()
             
             r_search = requests.get("http://www.omdbapi.com/", params={"s": simpler, "apikey": api_key}, timeout=4)
             data_search = r_search.json()
@@ -415,7 +417,7 @@ def render_grid(recs, score_col, score_label, accent, max_score=1.0, api_key="")
             title = row['title']
 
             # Fetch poster
-            poster_url = get_movie_poster_v3(title, api_key) if api_key else ""
+            poster_url = get_movie_poster_v4(title, api_key) if api_key else ""
 
             if poster_url:
                 img_html = f'<img src="{poster_url}" style="width:100%;height:240px;object-fit:cover;display:block;border-radius:0;">'
