@@ -226,7 +226,7 @@ def evaluate_models(_model, test):
     return run_full_evaluation(_model, test)
 
 @st.cache_data(ttl=86400)
-def get_movie_poster_v5(title: str, api_key: str) -> str:
+def get_movie_poster_v6(title: str, api_key: str) -> str:
     """Fetch movie poster and return as base64 data URI for inline embedding."""
     if not api_key:
         return ""
@@ -408,7 +408,7 @@ def render_grid(recs, score_col, score_label, accent, max_score=1.0, api_key="")
             title = row['title']
 
             # Fetch poster
-            poster_url = get_movie_poster_v5(title, api_key) if api_key else ""
+            poster_url = get_movie_poster_v6(title, api_key) if api_key else ""
 
             if poster_url:
                 img_html = f'<img src="{poster_url}" style="width:100%;height:240px;object-fit:cover;display:block;border-radius:0;">'
