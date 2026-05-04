@@ -227,19 +227,29 @@ def evaluate_models(_model, test):
 
 @st.cache_data(ttl=86400)
 def fetch_poster(title: str, api_key: str) -> str:
-    """Fetch movie poster URL from OMDb. Returns URL string or empty string."""
+    """Fetch movie poster and return as base64 data URI for inline embedding."""
     if not api_key:
         return ""
     try:
+        import base64
         clean = title.split("(")[0].strip()
+        # Step 1: get the poster URL from OMDb
         r = requests.get(
             "http://www.omdbapi.com/",
             params={"t": clean, "apikey": api_key},
             timeout=4
         )
         data = r.json()
-        if data.get("Response") == "True" and data.get("Poster", "N/A") != "N/A":
-            return data["Poster"]
+        if data.get("Response") != "True":
+            return ""
+        poster_url = data.get("Poster", "N/A")
+        if not poster_url or poster_url == "N/A":
+            return ""
+        # Step 2: download the image bytes and encode as base64
+        img_r = requests.get(poster_url, timeout=6)
+        if img_r.status_code == 200:
+            b64 = base64.b64encode(img_r.content).decode()
+            return f"data:image/jpeg;base64,{b64}"
     except Exception:
         pass
     return ""
