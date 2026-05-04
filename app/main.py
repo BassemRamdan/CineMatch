@@ -46,60 +46,161 @@ def score_bar(score, max_score=1.0, color="#a78bfa"):
 # ─── Master CSS ──────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; }
-html, body, [class*="css"]  { font-family: 'Inter', sans-serif; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, [class*="css"] { font-family: 'Space Grotesk', 'Inter', sans-serif; }
 
-/* ── App background ── */
-.stApp {
-    background: #080812;
-    background-image:
-        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124,58,237,0.25) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(59,130,246,0.18) 0%, transparent 60%);
-    min-height: 100vh;
+/* ── Keyframe Animations ── */
+@keyframes pulse-glow {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.05); }
+}
+@keyframes gradient-shift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+}
+@keyframes border-glow {
+    0%, 100% { border-color: rgba(167,139,250,0.2); box-shadow: 0 0 0px rgba(167,139,250,0); }
+    50%       { border-color: rgba(167,139,250,0.6); box-shadow: 0 0 20px rgba(167,139,250,0.15); }
+}
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
 }
 
+/* ── Cinematic Background ── */
+.stApp {
+    background: #060610;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+.stApp::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 70% 60% at 15% 5%,  rgba(124,58,237,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 85% 95%, rgba(59,130,246,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 60% 50%, rgba(236,72,153,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+.stApp > * { position: relative; z-index: 1; }
+
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #7c3aed, #3b82f6);
+    border-radius: 10px;
+}
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background: rgba(10,10,25,0.95) !important;
-    border-right: 1px solid rgba(255,255,255,0.06) !important;
-    backdrop-filter: blur(20px);
+    background: linear-gradient(180deg, rgba(8,6,20,0.98) 0%, rgba(12,8,28,0.98) 100%) !important;
+    border-right: 1px solid rgba(124,58,237,0.15) !important;
+    backdrop-filter: blur(30px);
+    box-shadow: 4px 0 30px rgba(0,0,0,0.5);
 }
 [data-testid="stSidebar"] * { color: rgba(255,255,255,0.85) !important; }
 [data-testid="stSidebar"] .stSelectbox > label,
 [data-testid="stSidebar"] .stRadio > label,
-[data-testid="stSidebar"] .stSlider > label { color: rgba(255,255,255,0.5) !important; font-size:0.78rem !important; font-weight:500 !important; letter-spacing:0.8px !important; text-transform:uppercase !important; }
+[data-testid="stSidebar"] .stSlider > label {
+    color: rgba(167,139,250,0.6) !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase !important;
+}
+
+/* ── Sidebar selectbox / radio styling ── */
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    background: rgba(255,255,255,0.04) !important;
+    border: 1px solid rgba(167,139,250,0.2) !important;
+    border-radius: 10px !important;
+    transition: border-color 0.2s ease !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] > div:hover {
+    border-color: rgba(167,139,250,0.5) !important;
+}
+
+/* ── Radio buttons ── */
+[data-testid="stSidebar"] [data-baseweb="radio"] label {
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    transition: background 0.2s ease !important;
+}
+[data-testid="stSidebar"] [data-baseweb="radio"] label:hover {
+    background: rgba(167,139,250,0.08) !important;
+}
 
 /* ── Hide default Streamlit chrome ── */
-#MainMenu, footer, header { visibility: hidden; }
+#MainMenu, footer { visibility: hidden; }
+header { background: transparent !important; }
 [data-testid="stDecoration"] { display: none; }
 
 /* ── Buttons ── */
 .stButton > button {
-    background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%) !important;
-    color: white !important; border: none !important;
-    border-radius: 12px !important; font-weight: 600 !important;
-    font-size: 0.88rem !important; padding: 0.65rem 1.4rem !important;
-    width: 100% !important; letter-spacing: 0.3px !important;
-    box-shadow: 0 4px 15px rgba(124,58,237,0.35) !important;
-    transition: all 0.2s ease !important;
+    position: relative !important;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5, #2563eb) !important;
+    background-size: 200% 200% !important;
+    animation: gradient-shift 4s ease infinite !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    padding: 0.7rem 1.4rem !important;
+    width: 100% !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.4), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+    transition: all 0.25s ease !important;
+    overflow: hidden !important;
+}
+.stButton > button::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0; left: -100% !important;
+    width: 100%; height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent) !important;
+    animation: shimmer 2.5s infinite !important;
 }
 .stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(124,58,237,0.55) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 12px 35px rgba(124,58,237,0.6), 0 0 0 1px rgba(167,139,250,0.3) !important;
 }
 
 /* ── Spinner ── */
 .stSpinner > div { border-top-color: #a78bfa !important; }
 
 /* ── HR ── */
-hr { border-color: rgba(255,255,255,0.06) !important; margin: 1.2rem 0 !important; }
+hr {
+    border: none !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, rgba(167,139,250,0.3), transparent) !important;
+    margin: 1.2rem 0 !important;
+}
+
+/* ── Slider thumb ── */
+[data-testid="stSidebar"] [data-testid="stSlider"] div[role="slider"] {
+    background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+    box-shadow: 0 0 10px rgba(124,58,237,0.5) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -134,12 +235,35 @@ with st.spinner("🔄  Loading data & training models…"):
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("""
-    <div style="text-align:center; padding: 1.5rem 0 1rem;">
-        <div style="font-size:2.4rem; margin-bottom:0.3rem;">🎬</div>
-        <div style="font-size:1.4rem; font-weight:800; background:linear-gradient(90deg,#a78bfa,#60a5fa);
-            -webkit-background-clip:text;-webkit-text-fill-color:transparent;">CineMatch</div>
-        <div style="font-size:0.72rem; color:rgba(255,255,255,0.35); letter-spacing:1px; margin-top:3px;">
-            SMART RECOMMENDER
+    <div style="text-align:center; padding: 1.8rem 0 1.2rem; position:relative;">
+        <!-- Glowing ring -->
+        <div style="
+            width:72px; height:72px; margin:0 auto 0.8rem;
+            border-radius:50%;
+            background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(59,130,246,0.3));
+            border: 2px solid rgba(167,139,250,0.5);
+            box-shadow: 0 0 25px rgba(124,58,237,0.4), 0 0 60px rgba(124,58,237,0.15), inset 0 0 20px rgba(167,139,250,0.1);
+            display:flex; align-items:center; justify-content:center;
+            font-size:2rem;
+            animation: pulse-glow 3s ease-in-out infinite;
+        ">🎬</div>
+        <div style="
+            font-size:1.6rem; font-weight:800;
+            background: linear-gradient(90deg, #a78bfa, #f472b6, #60a5fa);
+            background-size: 200% 200%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: gradient-shift 5s ease infinite;
+            letter-spacing: -0.5px;
+        ">CineMatch</div>
+        <div style="
+            font-size:0.65rem; color:rgba(167,139,250,0.5);
+            letter-spacing:3px; margin-top:4px; font-weight:600;
+            text-transform:uppercase;
+        ">SMART RECOMMENDER</div>
+        <div style="margin-top:12px; display:flex; justify-content:center; gap:4px;">
+            <div style="width:4px;height:4px;border-radius:50%;background:#a78bfa;opacity:0.6;"></div>
+            <div style="width:18px;height:4px;border-radius:2px;background:linear-gradient(90deg,#a78bfa,#60a5fa);"></div>
+            <div style="width:4px;height:4px;border-radius:50%;background:#60a5fa;opacity:0.6;"></div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -147,7 +271,7 @@ with st.sidebar:
     st.markdown("---")
     
     # Strategy Selection first
-    st.markdown('<div style="font-size:0.72rem;color:rgba(255,255,255,0.35);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:0.5rem;">🔀 Strategy</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem;">🔀 Strategy</div>', unsafe_allow_html=True)
     strategy = st.radio("Strategy", ["Hybrid", "Content-Based", "Collaborative Filtering"], label_visibility="collapsed")
     
     st.markdown("---")
@@ -157,15 +281,15 @@ with st.sidebar:
     selected_movie = None
     
     if strategy in ["Hybrid", "Collaborative Filtering"]:
-        st.markdown('<div style="font-size:0.72rem;color:rgba(255,255,255,0.35);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:0.5rem;">👤 User Profile</div>', unsafe_allow_html=True)
+        st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem;">👤 User Profile</div>', unsafe_allow_html=True)
         selected_user = st.selectbox("User ID", sorted(ratings['userId'].unique()), label_visibility="collapsed")
 
     if strategy in ["Hybrid", "Content-Based"]:
-        st.markdown('<div style="font-size:0.72rem;color:rgba(255,255,255,0.35);letter-spacing:0.8px;text-transform:uppercase;margin:0.8rem 0 0.5rem;">🎥 Seed Movie</div>', unsafe_allow_html=True)
+        st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin:0.8rem 0 0.5rem;">🎥 Seed Movie</div>', unsafe_allow_html=True)
         movie_titles   = sorted(movies['title'].dropna().unique())
         selected_movie = st.selectbox("Movie", movie_titles, label_visibility="collapsed")
 
-    st.markdown('<div style="font-size:0.72rem;color:rgba(255,255,255,0.35);letter-spacing:0.8px;text-transform:uppercase;margin:0.8rem 0 0.5rem;">🎯 Top N</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin:0.8rem 0 0.5rem;">🎯 Top N</div>', unsafe_allow_html=True)
     top_n = st.slider("Top N", 5, 20, 10, label_visibility="collapsed")
 
     st.markdown("---")
@@ -174,7 +298,7 @@ with st.sidebar:
 
     # ── Quick stats ──
     st.markdown("---")
-    st.markdown('<div style="font-size:0.72rem;color:rgba(255,255,255,0.35);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:0.8rem;">📁 Dataset Stats</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.8rem;">📁 Dataset Stats</div>', unsafe_allow_html=True)
     stats = [("Movies", f"{movies.shape[0]:,}"), ("Users", f"{ratings['userId'].nunique():,}"),
              ("Ratings", f"{len(ratings):,}"), ("Genres", str(len(set(g for gl in movies['genre_list'] for g in gl))))]
     for label, val in stats:
@@ -184,17 +308,32 @@ with st.sidebar:
             <span style="color:#a78bfa;font-weight:700;font-size:0.82rem;">{val}</span>
         </div>""", unsafe_allow_html=True)
 
-# ─── Main ─────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div style="padding: 2.5rem 0 2rem; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 2rem;">
-    <h1 style="font-size:2.6rem;font-weight:800;margin:0 0 0.4rem;
-        background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,0.7) 100%);
-        -webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-        Movie Recommendations
-    </h1>
-    <p style="color:rgba(255,255,255,0.35);margin:0;font-size:0.95rem;">
-        Powered by TF-IDF · Cosine Similarity · Singular Value Decomposition
+<div style="padding: 2.5rem 0 2rem; margin-bottom: 2rem; position:relative;">
+    <!-- Neon accent line -->
+    <div style="
+        position:absolute; top:0; left:0;
+        width:60px; height:3px;
+        background: linear-gradient(90deg, #7c3aed, #f472b6);
+        border-radius:2px;
+        box-shadow: 0 0 12px rgba(124,58,237,0.7);
+    "></div>
+    <h1 style="
+        font-size:2.8rem; font-weight:800; margin: 1.2rem 0 0.5rem;
+        background: linear-gradient(90deg, #ffffff 0%, #c4b5fd 40%, #93c5fd 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        letter-spacing: -1px; line-height: 1.1;
+    ">Movie Recommendations</h1>
+    <p style="color:rgba(255,255,255,0.3); margin: 0 0 1rem; font-size:0.9rem; letter-spacing:0.3px;">
+        Discover your next favourite film with AI-powered hybrid intelligence.
     </p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:rgba(167,139,250,0.8);padding:3px 12px;border-radius:50px;font-size:0.72rem;font-weight:600;letter-spacing:0.5px;">TF-IDF</span>
+        <span style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25);color:rgba(96,165,250,0.8);padding:3px 12px;border-radius:50px;font-size:0.72rem;font-weight:600;letter-spacing:0.5px;">Cosine Similarity</span>
+        <span style="background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.25);color:rgba(244,114,182,0.8);padding:3px 12px;border-radius:50px;font-size:0.72rem;font-weight:600;letter-spacing:0.5px;">SVD Factorisation</span>
+        <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:rgba(34,197,94,0.8);padding:3px 12px;border-radius:50px;font-size:0.72rem;font-weight:600;letter-spacing:0.5px;">Hybrid Weighting</span>
+    </div>
+    <div style="margin-top:1.5rem;height:1px;background:linear-gradient(90deg,rgba(124,58,237,0.4),rgba(59,130,246,0.2),transparent);"></div>
 </div>
 """, unsafe_allow_html=True)
 
