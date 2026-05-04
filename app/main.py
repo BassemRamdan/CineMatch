@@ -343,17 +343,8 @@ with st.sidebar:
     run_btn  = st.button("✨  Get Recommendations")
     eval_btn = st.button("📊  Evaluate Models")
 
-    # ── OMDb API Key ──
-    st.markdown("---")
-    st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem;">🖼️ Movie Posters</div>', unsafe_allow_html=True)
-    omdb_key = st.text_input(
-        "OMDb API Key",
-        value="6042e96b",
-        type="password",
-        placeholder="Paste your free key here…",
-        help="Get a FREE key at omdbapi.com — enables real movie poster images!",
-        label_visibility="collapsed"
-    )
+    # Hardcoded OMDb API Key
+    omdb_key = "6042e96b"
 
     # ── Quick stats ──
     st.markdown("---")
