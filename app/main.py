@@ -226,7 +226,7 @@ def evaluate_models(_model, test):
     return run_full_evaluation(_model, test)
 
 @st.cache_data(ttl=86400)
-def fetch_poster(title: str, api_key: str) -> str:
+def get_movie_poster(title: str, api_key: str) -> str:
     """Fetch movie poster and return as base64 data URI for inline embedding."""
     if not api_key:
         return ""
@@ -247,9 +247,13 @@ def fetch_poster(title: str, api_key: str) -> str:
         
         # Fallback to search match if exact match fails
         if data.get("Response") != "True" or poster_url == "N/A":
-            # Try searching the first part of the title before a colon (e.g. "Battle Royale 2" instead of "Battle Royale 2: Requiem")
-            simpler_clean = clean.split(":")[0].strip()
-            r_search = requests.get("http://www.omdbapi.com/", params={"s": simpler_clean, "apikey": api_key}, timeout=4)
+            simpler = clean.split(":")[0].strip()
+            # OMDb often uses roman numerals instead of "2" or "Part II"
+            simpler = simpler.replace("Part II", "II").replace("Part III", "III").replace("Part 2", "II")
+            simpler = re.sub(r' 2$', ' II', simpler)
+            simpler = re.sub(r' 3$', ' III', simpler)
+            
+            r_search = requests.get("http://www.omdbapi.com/", params={"s": simpler, "apikey": api_key}, timeout=4)
             data_search = r_search.json()
             if data_search.get("Response") == "True" and data_search.get("Search"):
                 poster_url = data_search["Search"][0].get("Poster", "N/A")
@@ -411,7 +415,7 @@ def render_grid(recs, score_col, score_label, accent, max_score=1.0, api_key="")
             title = row['title']
 
             # Fetch poster
-            poster_url = fetch_poster(title, api_key) if api_key else ""
+            poster_url = get_movie_poster(title, api_key) if api_key else ""
 
             if poster_url:
                 img_html = f'<img src="{poster_url}" style="width:100%;height:240px;object-fit:cover;display:block;border-radius:0;">'
