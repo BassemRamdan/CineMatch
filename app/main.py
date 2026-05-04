@@ -240,16 +240,20 @@ def fetch_poster(title: str, api_key: str) -> str:
         if match:
             clean = f"{match.group(2)} {match.group(1)}"
             
-        # Step 1: get the poster URL from OMDb
-        r = requests.get(
-            "http://www.omdbapi.com/",
-            params={"t": clean, "apikey": api_key},
-            timeout=4
-        )
+        # Step 1: get the poster URL from OMDb via exact match
+        r = requests.get("http://www.omdbapi.com/", params={"t": clean, "apikey": api_key}, timeout=4)
         data = r.json()
-        if data.get("Response") != "True":
-            return ""
         poster_url = data.get("Poster", "N/A")
+        
+        # Fallback to search match if exact match fails
+        if data.get("Response") != "True" or poster_url == "N/A":
+            # Try searching the first part of the title before a colon (e.g. "Battle Royale 2" instead of "Battle Royale 2: Requiem")
+            simpler_clean = clean.split(":")[0].strip()
+            r_search = requests.get("http://www.omdbapi.com/", params={"s": simpler_clean, "apikey": api_key}, timeout=4)
+            data_search = r_search.json()
+            if data_search.get("Response") == "True" and data_search.get("Search"):
+                poster_url = data_search["Search"][0].get("Poster", "N/A")
+                
         if not poster_url or poster_url == "N/A":
             return ""
         # Step 2: download the image bytes and encode as base64
