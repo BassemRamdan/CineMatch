@@ -331,13 +331,12 @@ with st.sidebar:
     st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem;">🖼️ Movie Posters</div>', unsafe_allow_html=True)
     omdb_key = st.text_input(
         "OMDb API Key",
+        value="6042e96b",
         type="password",
         placeholder="Paste your free key here…",
         help="Get a FREE key at omdbapi.com — enables real movie poster images!",
         label_visibility="collapsed"
     )
-    if not omdb_key:
-        st.markdown('<div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:4px;">🔑 No key? Get one free at <a href="https://www.omdbapi.com/apikey.aspx" style="color:#a78bfa;" target="_blank">omdbapi.com</a></div>', unsafe_allow_html=True)
 
     # ── Quick stats ──
     st.markdown("---")
