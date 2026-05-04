@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 import sys
+import requests
 
 # Add the project root to the path so we can import from src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -224,6 +225,25 @@ def train_models(movies, train):
 def evaluate_models(_model, test):
     return run_full_evaluation(_model, test)
 
+@st.cache_data(ttl=86400)
+def fetch_poster(title: str, api_key: str) -> str:
+    """Fetch movie poster URL from OMDb. Returns URL string or empty string."""
+    if not api_key:
+        return ""
+    try:
+        clean = title.split("(")[0].strip()
+        r = requests.get(
+            "http://www.omdbapi.com/",
+            params={"t": clean, "apikey": api_key},
+            timeout=4
+        )
+        data = r.json()
+        if data.get("Response") == "True" and data.get("Poster", "N/A") != "N/A":
+            return data["Poster"]
+    except Exception:
+        pass
+    return ""
+
 with st.spinner("🔄  Loading data & training models…"):
     try:
         movies, ratings, train, test = load_data()
@@ -296,6 +316,19 @@ with st.sidebar:
     run_btn  = st.button("✨  Get Recommendations")
     eval_btn = st.button("📊  Evaluate Models")
 
+    # ── OMDb API Key ──
+    st.markdown("---")
+    st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem;">🖼️ Movie Posters</div>', unsafe_allow_html=True)
+    omdb_key = st.text_input(
+        "OMDb API Key",
+        type="password",
+        placeholder="Paste your free key here…",
+        help="Get a FREE key at omdbapi.com — enables real movie poster images!",
+        label_visibility="collapsed"
+    )
+    if not omdb_key:
+        st.markdown('<div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:4px;">🔑 No key? Get one free at <a href="https://www.omdbapi.com/apikey.aspx" style="color:#a78bfa;" target="_blank">omdbapi.com</a></div>', unsafe_allow_html=True)
+
     # ── Quick stats ──
     st.markdown("---")
     st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.8rem;">📁 Dataset Stats</div>', unsafe_allow_html=True)
@@ -339,49 +372,91 @@ st.markdown("""
 
 col_main, col_info = st.columns([3, 1], gap="large")
 
-def render_cards(recs, score_col, score_label, accent, max_score=1.0):
+def render_grid(recs, score_col, score_label, accent, max_score=1.0, api_key=""):
+    """Render recommendations as a Netflix-style poster card grid."""
     if recs is None or (hasattr(recs, 'empty') and recs.empty):
-        st.warning("⚠️  No recommendations found.")
+        st.warning("⚠️  No recommendations found. Try a different movie or user.")
         return
-    for rank, (_, row) in enumerate(recs.iterrows(), 1):
-        score = float(row.get(score_col, 0))
-        genres_html = genre_badges(row.get('genres', ''))
-        bar = score_bar(score, max_score, accent)
-        st.markdown(f"""
-        <div style="
-            background: rgba(255,255,255,0.035);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 16px; padding: 1.1rem 1.4rem;
-            margin-bottom: 0.7rem;
-            display: flex; align-items: center; gap: 1.2rem;
-            transition: all 0.25s ease;
-            ">
-            <!-- Rank -->
-            <div style="min-width:2.4rem; text-align:center;">
-                <span style="font-size:1.4rem;font-weight:800;
-                    background:linear-gradient(135deg,{accent},{accent}88);
-                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-                    {rank:02d}
-                </span>
-            </div>
-            <!-- Separator -->
-            <div style="width:2px;height:48px;background:linear-gradient({accent},{accent}22);border-radius:2px;flex-shrink:0;"></div>
-            <!-- Info -->
-            <div style="flex:1; min-width:0;">
-                <div style="font-size:1rem;font-weight:700;color:#f1f5f9;
-                    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">
-                    {row['title']}
+
+    rows_list = list(recs.iterrows())
+    cols_per_row = 5
+    for row_start in range(0, len(rows_list), cols_per_row):
+        row_slice = rows_list[row_start: row_start + cols_per_row]
+        cols = st.columns(len(row_slice), gap="small")
+        for col, (rank_offset, (_, row)) in zip(cols, enumerate(row_slice)):
+            rank = row_start + rank_offset + 1
+            score = float(row.get(score_col, 0))
+            pct = min(100, max(0, (score / max_score) * 100)) if max_score else 0
+            genres_clean = str(row.get('genres', '')).replace('|', ' · ')
+            title = row['title']
+
+            # Fetch poster
+            poster_url = fetch_poster(title, api_key) if api_key else ""
+
+            if poster_url:
+                img_html = f'<img src="{poster_url}" style="width:100%;height:240px;object-fit:cover;display:block;border-radius:0;">'
+            else:
+                # Beautiful gradient placeholder
+                color2 = accent + "55"
+                first_letter = title[0].upper() if title else "?"
+                img_html = f"""
+                <div style="width:100%;height:240px;display:flex;align-items:center;justify-content:center;
+                    background:linear-gradient(135deg,{accent}33,{color2},rgba(0,0,0,0.5));
+                    font-size:3.5rem;font-weight:800;color:{accent};">
+                    {first_letter}
+                </div>"""
+
+            with col:
+                st.markdown(f"""
+                <div style="
+                    position:relative; border-radius:14px; overflow:hidden;
+                    background:#0d0d1a;
+                    border:1px solid rgba(255,255,255,0.07);
+                    box-shadow:0 4px 20px rgba(0,0,0,0.5);
+                    transition:all 0.3s ease;
+                    cursor:pointer;
+                    " onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.7),0 0 0 1px {accent}55';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.5)';"
+                >
+                    <!-- Poster -->
+                    {img_html}
+
+                    <!-- Rank badge -->
+                    <div style="
+                        position:absolute; top:10px; left:10px;
+                        background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
+                        border:1px solid {accent}66;
+                        color:{accent}; font-size:0.72rem; font-weight:800;
+                        padding:3px 9px; border-radius:50px; letter-spacing:0.5px;
+                    ">#{rank:02d}</div>
+
+                    <!-- Score badge -->
+                    <div style="
+                        position:absolute; top:10px; right:10px;
+                        background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
+                        border:1px solid {accent}66;
+                        color:{accent}; font-size:0.72rem; font-weight:800;
+                        padding:3px 9px; border-radius:50px;
+                    ">{score:.2f}</div>
+
+                    <!-- Info overlay -->
+                    <div style="padding:0.9rem 0.8rem 0.8rem;">
+                        <div style="
+                            font-size:0.88rem; font-weight:700; color:#f1f5f9;
+                            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+                            margin-bottom:4px;
+                        ">{title}</div>
+                        <div style="font-size:0.7rem; color:rgba(255,255,255,0.4); margin-bottom:8px;
+                            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            {genres_clean}
+                        </div>
+                        <!-- Score bar -->
+                        <div style="background:rgba(255,255,255,0.08);border-radius:50px;height:3px;width:100%;">
+                            <div style="background:{accent};height:3px;border-radius:50px;width:{pct:.1f}%;
+                                box-shadow:0 0 6px {accent};"></div>
+                        </div>
+                    </div>
                 </div>
-                <div>{genres_html}</div>
-                {bar}
-            </div>
-            <!-- Score -->
-            <div style="text-align:right; flex-shrink:0; padding-left:1rem;">
-                <div style="font-size:1.35rem;font-weight:800;color:{accent};">{score:.3f}</div>
-                <div style="font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:2px;letter-spacing:0.5px;">{score_label.upper()}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
 
 
 with col_main:
@@ -401,17 +476,17 @@ with col_main:
         if strategy == "Content-Based":
             with st.spinner("Computing content similarity…"):
                 recs_cb = content_model.recommend(selected_movie, top_n=top_n)
-            render_cards(recs_cb, "similarity", "Similarity", "#a78bfa")
+            render_grid(recs_cb, "similarity", "Similarity", "#a78bfa", api_key=omdb_key)
 
         elif strategy == "Collaborative Filtering":
             with st.spinner("Running SVD predictions…"):
                 recs_cf = collab_model.recommend(selected_user, movies, top_n=top_n)
-            render_cards(recs_cf, "est_rating", "SVD Score", "#60a5fa", max_score=5.0)
+            render_grid(recs_cf, "est_rating", "SVD Score", "#60a5fa", max_score=5.0, api_key=omdb_key)
 
         elif strategy == "Hybrid":
             with st.spinner("Running hybrid model…"):
                 recs_hy = hybrid_model.recommend(selected_user, selected_movie, top_n=top_n)
-            render_cards(recs_hy, "hybrid_score", "Hybrid Score", "#f472b6")
+            render_grid(recs_hy, "hybrid_score", "Hybrid Score", "#f472b6", api_key=omdb_key)
 
     else:
         # ── Landing splash ──
@@ -480,11 +555,11 @@ if eval_btn:
         metrics = evaluate_models(collab_model, test)
 
     items = [
-        ("RMSE",         metrics["RMSE"],         "#ef4444", "Prediction error",  "Lower is better"),
-        ("MAE",          metrics["MAE"],           "#f97316", "Absolute error",    "Lower is better"),
-        ("Precision@10", metrics["Precision@K"],   "#22c55e", "Relevant in top 10","Higher is better"),
-        ("Recall@10",    metrics["Recall@K"],      "#3b82f6", "Coverage of relevant","Higher is better"),
-        ("F1-Score",     metrics["F1-Score"],      "#a78bfa", "Harmonic mean",     "P-R balance"),
+        ("RMSE",       metrics["RMSE"],         "#ef4444", "Prediction error",    "Lower is better"),
+        ("MAE",         metrics["MAE"],           "#f97316", "Absolute error",      "Lower is better"),
+        ("Precision",   metrics["Precision@K"],   "#22c55e", "Relevant in top 10",  "Higher is better"),
+        ("Recall",      metrics["Recall@K"],      "#3b82f6", "Coverage of relevant","Higher is better"),
+        ("F1-Score",    metrics["F1-Score"],      "#a78bfa", "Harmonic mean",       "P-R balance"),
     ]
 
     cols = st.columns(5, gap="medium")
