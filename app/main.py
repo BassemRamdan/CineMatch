@@ -232,7 +232,14 @@ def fetch_poster(title: str, api_key: str) -> str:
         return ""
     try:
         import base64
-        clean = title.split("(")[0].strip()
+        import re
+        # Remove year in parentheses
+        clean = re.sub(r'\(\d{4}\)', '', title).strip()
+        # Fix "Movie, The" or "Movie, A" formatting from MovieLens
+        match = re.search(r'^(.*),\s*(The|A|An)$', clean, flags=re.IGNORECASE)
+        if match:
+            clean = f"{match.group(2)} {match.group(1)}"
+            
         # Step 1: get the poster URL from OMDb
         r = requests.get(
             "http://www.omdbapi.com/",
