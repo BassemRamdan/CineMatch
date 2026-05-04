@@ -316,22 +316,16 @@ with col_info:
     if run_btn:
         st.markdown('<div style="font-size:1.3rem;font-weight:700;color:#e2e8f0;margin:1.5rem 0 1rem;">🎯 Current Query</div>', unsafe_allow_html=True)
         
-        user_html = f"""
-            <div style="color:rgba(255,255,255,0.45); font-size:0.75rem; margin-bottom:0.3rem">USER</div>
-            <div style="color:#e2e8f0; font-weight:600; font-size:0.9rem">#{selected_user}</div>
-        """ if selected_user else ""
-        
-        movie_html = f"""
-            <div style="color:rgba(255,255,255,0.45); font-size:0.75rem; margin: {0.6 if selected_user else 0}rem 0 0.3rem">SEED MOVIE</div>
-            <div style="color:#e2e8f0; font-weight:600; font-size:0.9rem">{selected_movie}</div>
-        """ if selected_movie else ""
-        
-        st.markdown(f"""
-        <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:0.9rem 1.2rem;">
-            {user_html}
-            {movie_html}
-        </div>
-        """, unsafe_allow_html=True)
+        user_html = ""
+        if selected_user:
+            user_html = f'<div style="color:rgba(255,255,255,0.45); font-size:0.75rem; margin-bottom:0.3rem">USER</div><div style="color:#e2e8f0; font-weight:600; font-size:0.9rem">#{selected_user}</div>'
+            
+        movie_html = ""
+        if selected_movie:
+            m_top = "0.6rem" if selected_user else "0rem"
+            movie_html = f'<div style="color:rgba(255,255,255,0.45); font-size:0.75rem; margin: {m_top} 0 0.3rem">SEED MOVIE</div><div style="color:#e2e8f0; font-weight:600; font-size:0.9rem">{selected_movie}</div>'
+            
+        st.markdown(f"""<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:0.9rem 1.2rem;">{user_html}{movie_html}</div>""", unsafe_allow_html=True)
 
 # ─── Evaluation Section ───────────────────────────────────────────────────────
 if eval_btn:
