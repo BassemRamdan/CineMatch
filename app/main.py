@@ -407,56 +407,27 @@ def render_grid(recs, score_col, score_label, accent, max_score=1.0, api_key="")
                 </div>"""
 
             with col:
-                st.markdown(f"""
-                <div style="
-                    position:relative; border-radius:14px; overflow:hidden;
-                    background:#0d0d1a;
-                    border:1px solid rgba(255,255,255,0.07);
-                    box-shadow:0 4px 20px rgba(0,0,0,0.5);
-                    transition:all 0.3s ease;
-                    cursor:pointer;
-                    " onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.7),0 0 0 1px {accent}55';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.5)';"
-                >
-                    <!-- Poster -->
-                    {img_html}
-
-                    <!-- Rank badge -->
-                    <div style="
-                        position:absolute; top:10px; left:10px;
-                        background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
-                        border:1px solid {accent}66;
-                        color:{accent}; font-size:0.72rem; font-weight:800;
-                        padding:3px 9px; border-radius:50px; letter-spacing:0.5px;
-                    ">#{rank:02d}</div>
-
-                    <!-- Score badge -->
-                    <div style="
-                        position:absolute; top:10px; right:10px;
-                        background:rgba(0,0,0,0.75); backdrop-filter:blur(8px);
-                        border:1px solid {accent}66;
-                        color:{accent}; font-size:0.72rem; font-weight:800;
-                        padding:3px 9px; border-radius:50px;
-                    ">{score:.2f}</div>
-
-                    <!-- Info overlay -->
-                    <div style="padding:0.9rem 0.8rem 0.8rem;">
-                        <div style="
-                            font-size:0.88rem; font-weight:700; color:#f1f5f9;
-                            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-                            margin-bottom:4px;
-                        ">{title}</div>
-                        <div style="font-size:0.7rem; color:rgba(255,255,255,0.4); margin-bottom:8px;
-                            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                            {genres_clean}
-                        </div>
-                        <!-- Score bar -->
-                        <div style="background:rgba(255,255,255,0.08);border-radius:50px;height:3px;width:100%;">
-                            <div style="background:{accent};height:3px;border-radius:50px;width:{pct:.1f}%;
-                                box-shadow:0 0 6px {accent};"></div>
-                        </div>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                card = (
+                    f'<div style="position:relative;border-radius:14px;overflow:hidden;background:#0d0d1a;'
+                    f'border:1px solid rgba(255,255,255,0.07);box-shadow:0 4px 20px rgba(0,0,0,0.5);'
+                    f'transition:all 0.3s ease;cursor:pointer;"'
+                    f' onmouseover="this.style.transform=\'translateY(-6px)\';this.style.boxShadow=\'0 16px 40px rgba(0,0,0,0.7),0 0 0 1px {accent}55\';"'
+                    f' onmouseout="this.style.transform=\'\';this.style.boxShadow=\'0 4px 20px rgba(0,0,0,0.5)\';">'
+                    f'{img_html}'
+                    f'<div style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);'
+                    f'border:1px solid {accent}66;color:{accent};font-size:0.72rem;font-weight:800;'
+                    f'padding:3px 9px;border-radius:50px;letter-spacing:0.5px;">#{rank:02d}</div>'
+                    f'<div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);'
+                    f'border:1px solid {accent}66;color:{accent};font-size:0.72rem;font-weight:800;'
+                    f'padding:3px 9px;border-radius:50px;">{score:.2f}</div>'
+                    f'<div style="padding:0.9rem 0.8rem 0.8rem;">'
+                    f'<div style="font-size:0.88rem;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">{title}</div>'
+                    f'<div style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{genres_clean}</div>'
+                    f'<div style="background:rgba(255,255,255,0.08);border-radius:50px;height:3px;width:100%;">'
+                    f'<div style="background:{accent};height:3px;border-radius:50px;width:{pct:.1f}%;box-shadow:0 0 6px {accent};"></div>'
+                    f'</div></div></div>'
+                )
+                st.markdown(card, unsafe_allow_html=True)
 
 
 with col_main:
