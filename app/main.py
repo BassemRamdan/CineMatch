@@ -343,9 +343,10 @@ with st.sidebar:
     run_btn  = st.button("✨  Get Recommendations")
     eval_btn = st.button("📊  Evaluate Models")
 
-    # Hardcoded OMDb API Key (Using fresh key to bypass previous rate limit)
-    omdb_key = "b6003d8a"
-
+    st.markdown("---")
+    st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.8rem;">🖼️ Movie Posters</div>', unsafe_allow_html=True)
+    omdb_key = st.text_input("OMDb API Key", type="password", help="Get a free key at omdbapi.com to load posters.")
+    
     # ── Quick stats ──
     st.markdown("---")
     st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.8rem;">📁 Dataset Stats</div>', unsafe_allow_html=True)
