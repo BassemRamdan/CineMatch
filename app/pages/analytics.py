@@ -1,6 +1,5 @@
 import streamlit as st
 from app.ui import page_header
-from app.main import evaluate_models # I'll need to define this in main.py, or import the function directly
 from src.evaluation import run_full_evaluation
 
 def render(test_data, collab_model):

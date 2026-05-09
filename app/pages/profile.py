@@ -8,7 +8,7 @@ def render(movies, ratings):
     page_header(f"Profile: User #{user_id}", "Your watching history and taste analysis.", "#3b82f6")
     
     user_r = ratings[ratings["userId"] == user_id].copy()
-    user_r = user_r.merge(movies[["movieId","title","genres","year","rating_count","rating_mean"]], on="movieId", how="left")
+    user_r = user_r.merge(movies[["movieId","title","genres","year"]], on="movieId", how="left")
     user_r = user_r.sort_values("rating", ascending=False)
     
     if user_r.empty:

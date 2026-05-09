@@ -41,7 +41,11 @@ def render(movies, ratings):
     
     # Simple trending logic (most rated in dataset)
     if 'trending' not in st.session_state:
-        trending = movies.sort_values(by='rating_count', ascending=False).head(10)
+        # Dynamically calculate rating count
+        movie_counts = ratings['movieId'].value_counts().reset_index()
+        movie_counts.columns = ['movieId', 'rating_count']
+        trending_movies = movies.merge(movie_counts, on='movieId', how='left')
+        trending = trending_movies.sort_values(by='rating_count', ascending=False).head(10)
         st.session_state.trending = trending
         
     render_movie_grid(st.session_state.trending, score_col=None, score_label=None, accent="#f472b6", show_rank=False)
