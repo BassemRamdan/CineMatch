@@ -343,9 +343,8 @@ with st.sidebar:
     run_btn  = st.button("✨  Get Recommendations")
     eval_btn = st.button("📊  Evaluate Models")
 
-    st.markdown("---")
-    st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.8rem;">🖼️ Movie Posters</div>', unsafe_allow_html=True)
-    omdb_key = st.text_input("OMDb API Key", type="password", help="Leave blank to use the default key, or enter your own.") or "thewdb"
+    # Hardcoded unmetered API key so the UI stays clean
+    omdb_key = "thewdb"
     
     # ── Quick stats ──
     st.markdown("---")
