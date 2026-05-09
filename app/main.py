@@ -226,7 +226,7 @@ def evaluate_models(_model, test):
     return run_full_evaluation(_model, test)
 
 @st.cache_data(ttl=86400)
-def get_movie_poster_v6(title: str, api_key: str) -> str:
+def get_movie_poster_v7(title: str, api_key: str) -> str:
     """Fetch movie poster and return as base64 data URI for inline embedding."""
     if not api_key:
         return ""
@@ -345,7 +345,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.8rem;">🖼️ Movie Posters</div>', unsafe_allow_html=True)
-    omdb_key = st.text_input("OMDb API Key", type="password", help="Get a free key at omdbapi.com to load posters.")
+    omdb_key = st.text_input("OMDb API Key", type="password", help="Leave blank to use the default key, or enter your own.") or "thewdb"
     
     # ── Quick stats ──
     st.markdown("---")
@@ -409,7 +409,7 @@ def render_grid(recs, score_col, score_label, accent, max_score=1.0, api_key="")
             title = row['title']
 
             # Fetch poster
-            poster_url = get_movie_poster_v6(title, api_key) if api_key else ""
+            poster_url = get_movie_poster_v7(title, api_key) if api_key else ""
 
             if poster_url:
                 img_html = f'<img src="{poster_url}" style="width:100%;height:240px;object-fit:cover;display:block;border-radius:0;">'
