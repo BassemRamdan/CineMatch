@@ -215,10 +215,10 @@ def load_data_v2(force_bust="v3"):
     )
 
 @st.cache_resource
-def train_models_v2(movies, train):
+def train_models_v3(movies, train):
     cb = ContentBasedRecommender(); cb.fit(movies)
     cf = CollaborativeRecommender(factors=50); cf.fit(train)
-    hy = HybridRecommender(cb, cf, content_weight=0.5)
+    hy = HybridRecommender(cb, cf, content_weight=0.3)
     return cb, cf, hy
 
 @st.cache_data
@@ -274,7 +274,7 @@ def get_movie_poster_v7(title: str, api_key: str) -> str:
 with st.spinner("🔄  Loading data & training models…"):
     try:
         movies, ratings, train, test = load_data_v2("v4")
-        content_model, collab_model, hybrid_model = train_models_v2(movies, train)
+        content_model, collab_model, hybrid_model = train_models_v3(movies, train)
     except Exception as e:
         st.error(f"**Data load error.** Make sure `movies.csv` and `ratings.csv` are in `data/raw/`.\n\n`{e}`")
         st.stop()
