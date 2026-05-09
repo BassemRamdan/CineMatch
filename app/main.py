@@ -503,8 +503,8 @@ with col_info:
     st.markdown('<div style="font-size:1.3rem;font-weight:700;color:#e2e8f0;margin-bottom:1rem;">🔬 Models</div>', unsafe_allow_html=True)
     model_info = [
         ("Content-Based",  "TF-IDF · Cosine Sim",      "background:rgba(167,139,250,0.2);color:#a78bfa;border:1px solid rgba(167,139,250,0.4);"),
-        ("Collaborative",  "TruncatedSVD · 50 factors", "background:rgba(96,165,250,0.2);color:#60a5fa;border:1px solid rgba(96,165,250,0.4);"),
-        ("Hybrid",         "Weighted Avg · α = 0.5",    "background:rgba(244,114,182,0.2);color:#f472b6;border:1px solid rgba(244,114,182,0.4);"),
+        ("Collaborative",  "Surprise SVD · 50 factors", "background:rgba(96,165,250,0.2);color:#60a5fa;border:1px solid rgba(96,165,250,0.4);"),
+        ("Hybrid",         "Weighted Avg · α = 0.7",    "background:rgba(244,114,182,0.2);color:#f472b6;border:1px solid rgba(244,114,182,0.4);"),
     ]
     for name, detail, style in model_info:
         st.markdown(f"""
