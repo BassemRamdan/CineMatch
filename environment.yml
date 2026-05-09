@@ -1,0 +1,13 @@
+name: surprise-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas>=1.5.0
+  - numpy>=1.23.0
+  - scipy>=1.10.0
+  - scikit-learn>=1.2.0
+  - streamlit>=1.25.0
+  - requests>=2.28.0
+  - scikit-surprise>=1.1.3
