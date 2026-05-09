@@ -48,12 +48,12 @@ def render(movies, ratings, hybrid_model):
             cf_norm = min(1.0, max(0, cf_score / 5.0)) # Normalize CF score for display
             hy_score = top_rec.get('hybrid_score', 0)
             
-            st.markdown(f"""
+            import textwrap
+            html_block = textwrap.dedent(f"""
             <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(244,114,182,0.3); border-radius:12px; padding:1.5rem; margin-bottom:2rem; display:flex; align-items:center; gap:2rem;">
                 <div style="flex:1;">
                     <div style="font-size:0.8rem; color:#a78bfa; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.3rem;">Top Match Analysis</div>
                     <div style="font-size:1.2rem; font-weight:700; color:white; margin-bottom:1rem;">{top_rec['title']}</div>
-                    
                     <div style="margin-bottom:0.8rem;">
                         <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:rgba(255,255,255,0.7); margin-bottom:4px;">
                             <span>Content Similarity (TF-IDF)</span><span style="color:#22c55e;">{sim_score:.2f}</span>
@@ -62,7 +62,6 @@ def render(movies, ratings, hybrid_model):
                             <div style="width:{sim_score*100}%; height:6px; background:#22c55e; border-radius:3px;"></div>
                         </div>
                     </div>
-                    
                     <div style="margin-bottom:0.8rem;">
                         <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:rgba(255,255,255,0.7); margin-bottom:4px;">
                             <span>Collaborative Prediction (SVD)</span><span style="color:#3b82f6;">{cf_score:.2f} / 5.0</span>
@@ -72,13 +71,13 @@ def render(movies, ratings, hybrid_model):
                         </div>
                     </div>
                 </div>
-                
                 <div style="text-align:center; padding-left:2rem; border-left:1px dashed rgba(255,255,255,0.1);">
                     <div style="font-size:0.8rem; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Final Hybrid Score</div>
                     <div style="font-size:3.5rem; font-weight:800; color:#f472b6; line-height:1; text-shadow: 0 0 20px rgba(244,114,182,0.4);">{hy_score:.2f}</div>
                     <div style="font-size:0.7rem; color:rgba(255,255,255,0.3); margin-top:0.5rem;">Weighted 70% CF / 30% Content</div>
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
+            st.markdown(html_block, unsafe_allow_html=True)
             
             render_movie_grid(recs_hy, "hybrid_score", "Hybrid Score", "#f472b6", show_rank=True)
