@@ -342,11 +342,11 @@ with st.sidebar:
     st.markdown('<div style="font-size:0.65rem;color:rgba(167,139,250,0.6);letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:0.8rem;padding-left:1rem;">Menu</div>', unsafe_allow_html=True)
     
     nav_items = [
-        ("Home", "🏠 Home"),
-        ("Profile", "👤 User Profile"),
-        ("Content", "🎥 Content-Based"),
-        ("Hybrid", "🔮 Hybrid Engine"),
-        ("Analytics", "📊 Analytics")
+        ("Home", "🏠 Discover"),
+        ("Profile", "👤 My Profile"),
+        ("Content", "🎥 Find Similar Movies"),
+        ("Hybrid", "🔮 AI Smart Match"),
+        ("Analytics", "📊 System Analytics")
     ]
     
     for page_id, label in nav_items:
@@ -493,11 +493,11 @@ def render_profile():
         st.markdown('</div>', unsafe_allow_html=True)
 
 def render_content():
-    page_header("Content-Based Match", "Because you liked this movie...", "#22c55e")
+    page_header("Find Similar Movies", "Because you liked this movie...", "#22c55e")
     movie_titles = sorted(movies['title'].dropna().unique())
     col1, col2 = st.columns([2, 1], gap="large")
     with col1:
-        st.markdown('<div style="font-size:0.9rem;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:1px;">Search for a movie</div>', unsafe_allow_html=True)
+        st.markdown('<div style="font-size:0.9rem;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:1px;">Select a movie you like</div>', unsafe_allow_html=True)
         selected_movie = st.selectbox("Select a movie", movie_titles, label_visibility="collapsed", key="cb_movie")
     with col2:
         st.markdown('<div style="font-size:0.9rem;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:1px;">Results</div>', unsafe_allow_html=True)
@@ -507,11 +507,24 @@ def render_content():
     if selected_movie:
         with st.spinner("Finding similar movies..."):
             recs_cb = content_model.recommend(selected_movie, top_n=top_n)
-        st.markdown(f'<div style="font-size:1.4rem;font-weight:700;color:#e2e8f0;margin-bottom:1.5rem;">Similar to <span style="color:#22c55e;">{selected_movie}</span></div>', unsafe_allow_html=True)
+            
+        poster_url = get_movie_poster(selected_movie)
+        
+        col_poster, col_info = st.columns([1, 4])
+        with col_poster:
+            if poster_url:
+                st.markdown(f'<img src="{poster_url}" style="width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.5);">', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div style="width:100%;aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;background:#22c55e33;border-radius:12px;color:#22c55e;font-size:3rem;font-weight:800;">?</div>', unsafe_allow_html=True)
+        with col_info:
+            st.markdown(f'<div style="font-size:1.4rem;font-weight:700;color:#e2e8f0;margin-bottom:0.5rem;margin-top:1rem;">Because you liked <br><span style="color:#22c55e;font-size:2.5rem;">{selected_movie}</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="color:rgba(255,255,255,0.6);font-size:1.1rem;">Here are {top_n} movies with highly similar genres...</div>', unsafe_allow_html=True)
+            
+        st.markdown("<br>", unsafe_allow_html=True)
         render_movie_grid(recs_cb, "similarity", "Similarity", "#22c55e", show_rank=True)
 
 def render_hybrid():
-    page_header("Hybrid Intelligence", "The ultimate personalized movie mix.", "#f472b6")
+    page_header("AI Smart Match", "The ultimate personalized movie mix.", "#f472b6")
     user_id = st.session_state.get('active_user', sorted(ratings['userId'].unique())[0])
     movie_titles = sorted(movies['title'].dropna().unique())
     
