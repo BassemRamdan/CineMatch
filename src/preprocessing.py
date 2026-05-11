@@ -35,7 +35,7 @@ def load_and_preprocess_data(movies_path, ratings_path):
     ratings = ratings.drop(columns=["timestamp"]).reset_index(drop=True)
 
     # Feature Engineering — Content-Based
-    movies["genre_list"] = movies["genres"].str.split("|")
+    movies["genre_list"] = movies["genres"].str.split("|").apply(tuple)
     movies["genres_str"] = movies["genre_list"].apply(lambda g: " ".join(g))
 
     # Filter Cold-Start Users & Movies
