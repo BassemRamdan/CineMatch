@@ -464,7 +464,14 @@ def render_profile():
     top_genre = genre_counts.index[0] if len(genre_counts) > 0 else "N/A"
     stat_card(col3, "Top Genre", top_genre, "#f472b6")
     
-    fav_decade = (user_r['year'] // 10 * 10).mode().iloc[0] if not user_r['year'].isna().all() else "N/A"
+    if not user_r['year'].isna().all():
+        user_r['decade'] = user_r['year'] // 10 * 10
+        era_stats = user_r.groupby('decade').agg(avg_rating=('rating', 'mean'), count=('rating', 'count'))
+        valid_eras = era_stats[era_stats['count'] >= (3 if len(user_r) > 10 else 1)]
+        fav_decade = valid_eras['avg_rating'].idxmax() if not valid_eras.empty else era_stats['avg_rating'].idxmax()
+    else:
+        fav_decade = "N/A"
+        
     stat_card(col4, "Favorite Era", f"{int(fav_decade)}s" if fav_decade != "N/A" else "N/A", "#22c55e")
     
     st.markdown("<br>", unsafe_allow_html=True)
