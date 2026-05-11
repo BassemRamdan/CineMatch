@@ -250,16 +250,11 @@ def render_movie_grid(recs, score_col, score_label, accent, max_score=1.0, api_k
             poster_url = get_movie_poster(title, api_key)
 
             if poster_url:
-                img_html = f'<img src="{poster_url}" style="width:100%;height:240px;object-fit:cover;display:block;border-radius:0;">'
+                img_html = f'<img src="{poster_url}" style="width:100%;aspect-ratio:2/3;object-fit:cover;display:block;border-radius:0;object-position:top;">'
             else:
                 color2 = accent + "55"
                 first_letter = title[0].upper() if title else "?"
-                img_html = f"""
-                <div style="width:100%;height:240px;display:flex;align-items:center;justify-content:center;
-                    background:linear-gradient(135deg,{accent}33,{color2},rgba(0,0,0,0.5));
-                    font-size:3.5rem;font-weight:800;color:{accent};">
-                    {first_letter}
-                </div>"""
+                img_html = f"""<div style="width:100%;aspect-ratio:2/3;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,{accent}33,{color2},rgba(0,0,0,0.5));font-size:3.5rem;font-weight:800;color:{accent};">{first_letter}</div>"""
 
             with col:
                 rank_badge = f'<div style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);border:1px solid {accent}66;color:{accent};font-size:0.72rem;font-weight:800;padding:3px 9px;border-radius:50px;letter-spacing:0.5px;">#{rank:02d}</div>' if show_rank else ""
