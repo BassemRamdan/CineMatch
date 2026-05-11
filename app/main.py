@@ -266,18 +266,14 @@ def render_movie_grid(recs, score_col, score_label, accent, max_score=1.0, api_k
                 score_badge = f'<div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);border:1px solid {accent}66;color:{accent};font-size:0.72rem;font-weight:800;padding:3px 9px;border-radius:50px;">{score:.2f}</div>' if score_col else ""
                 score_bar = f'<div style="background:rgba(255,255,255,0.08);border-radius:50px;height:3px;width:100%;"><div style="background:{accent};height:3px;border-radius:50px;width:{pct:.1f}%;box-shadow:0 0 6px {accent};"></div></div>' if score_col else ""
 
-                card = textwrap.dedent(f"""
-                <div style="position:relative;border-radius:14px;overflow:hidden;background:#0d0d1a;border:1px solid rgba(255,255,255,0.07);box-shadow:0 4px 20px rgba(0,0,0,0.5);transition:all 0.3s ease;cursor:pointer;margin-bottom:1rem;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.7),0 0 0 1px {accent}55';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.5)';">
-                    {img_html}
-                    {rank_badge}
-                    {score_badge}
-                    <div style="padding:0.9rem 0.8rem 0.8rem;">
-                        <div style="font-size:0.88rem;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;" title="{title}">{title}</div>
-                        <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{genres_clean}</div>
-                        {score_bar}
-                    </div>
-                </div>
-                """)
+                card = f"""<div style="position:relative;border-radius:14px;overflow:hidden;background:#0d0d1a;border:1px solid rgba(255,255,255,0.07);box-shadow:0 4px 20px rgba(0,0,0,0.5);transition:all 0.3s ease;cursor:pointer;margin-bottom:1rem;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.7),0 0 0 1px {accent}55';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.5)';">
+{img_html}{rank_badge}{score_badge}
+<div style="padding:0.9rem 0.8rem 0.8rem;">
+<div style="font-size:0.88rem;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;" title="{title}">{title}</div>
+<div style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{genres_clean}</div>
+{score_bar}
+</div>
+</div>"""
                 st.markdown(card, unsafe_allow_html=True)
 
 def page_header(title, subtitle, accent_color="#7c3aed"):
