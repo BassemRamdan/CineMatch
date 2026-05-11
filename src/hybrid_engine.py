@@ -3,24 +3,13 @@ from sklearn.preprocessing import MinMaxScaler
 
 class HybridRecommender:
     def __init__(self, content_model, collab_model, content_weight=0.5):
-        """
-        Initialize the Hybrid Recommender.
-        
-        Args:
-            content_model: Fitted ContentBasedRecommender instance.
-            collab_model: Fitted CollaborativeRecommender instance.
-            content_weight: Weight for the content-based score (0 to 1). Collab weight will be 1 - content_weight.
-        """
         self.content_model = content_model
         self.collab_model = collab_model
         self.content_weight = content_weight
         self.collab_weight = 1.0 - content_weight
         
     def recommend(self, user_id, title, top_n=10):
-        """
-        Recommend movies using a hybrid approach.
-        Combines content similarity with collaborative predictions.
-        """
+
         if self.content_model.movies_df is None or self.content_model.cosine_sim is None:
             raise ValueError("Content model must be fitted.")
             

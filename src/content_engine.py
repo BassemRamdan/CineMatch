@@ -30,7 +30,6 @@ class ContentBasedRecommender:
         self.indices = pd.Series(self.movies_df.index, index=self.movies_df["title"]).drop_duplicates()
         
     def recommend(self, title, top_n=10):
-        """Recommend movies based on cosine similarity of genres."""
         if self.movies_df is None or self.cosine_sim is None:
             raise ValueError("Model must be fitted before recommending.")
             
@@ -55,7 +54,6 @@ class ContentBasedRecommender:
         return recs[["movieId", "title", "genres", "similarity"]]
 
     def search_movie(self, keyword):
-        """Helper to search for a movie by keyword."""
         if self.movies_df is None:
             raise ValueError("Model must be fitted first.")
         return self.movies_df[self.movies_df["title"].str.contains(keyword, case=False)][["title"]].head(20)

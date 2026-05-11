@@ -2,16 +2,6 @@ import pandas as pd
 import numpy as np
 
 def load_and_preprocess_data(movies_path, ratings_path):
-    """
-    Loads and preprocesses the MovieLens dataset.
-    
-    Args:
-        movies_path (str): Path to movies.csv
-        ratings_path (str): Path to ratings.csv
-        
-    Returns:
-        tuple: (movies_df, ratings_df, train_df, test_df)
-    """
     # Load Data
     movies  = pd.read_csv(movies_path)
     ratings = pd.read_csv(ratings_path)

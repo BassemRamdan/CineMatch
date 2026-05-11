@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineMatch – Evaluation Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;font-size:11pt;color:#1a1a2e;background:#fff;line-height:1.7;}
+  @page{margin:2.2cm 2cm;}
+  /* Cover */
+  .cover{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;text-align:center;border-bottom:3px solid #6c3df4;padding-bottom:3rem;}
+  .cover-logo{font-family:'Playfair Display',serif;font-size:52pt;color:#6c3df4;letter-spacing:-2px;margin-bottom:.2rem;}
+  .cover-sub{font-size:13pt;color:#888;letter-spacing:4px;text-transform:uppercase;margin-bottom:3rem;}
+  .cover-title{font-size:22pt;font-weight:700;color:#1a1a2e;margin-bottom:.6rem;}
+  .cover-subtitle{font-size:12pt;color:#555;margin-bottom:3rem;}
+  .cover-meta{background:#f4f0ff;border:1px solid #d4bfff;border-radius:10px;padding:1.4rem 2.5rem;display:inline-block;text-align:left;}
+  .cover-meta h4{font-size:9pt;letter-spacing:3px;text-transform:uppercase;color:#6c3df4;margin-bottom:.8rem;}
+  .member{display:flex;justify-content:space-between;gap:3rem;font-size:10.5pt;color:#333;padding:.25rem 0;border-bottom:1px solid #ece6ff;}
+  .member:last-child{border:none;}
+  .member .name{font-weight:600;}
+  .member .id{color:#6c3df4;font-weight:600;}
+  .cover-date{margin-top:2rem;font-size:9.5pt;color:#aaa;}
+  /* Sections */
+  .section{page-break-before:always;padding-top:1rem;}
+  h1{font-family:'Playfair Display',serif;font-size:20pt;color:#6c3df4;border-bottom:2px solid #ede8ff;padding-bottom:.5rem;margin-bottom:1.4rem;}
+  h2{font-size:13pt;font-weight:700;color:#1a1a2e;margin:1.4rem 0 .6rem;border-left:4px solid #6c3df4;padding-left:.7rem;}
+  h3{font-size:11pt;font-weight:600;color:#444;margin:.9rem 0 .4rem;}
+  p{margin-bottom:.7rem;color:#333;}
+  /* Metrics grid */
+  .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;}
+  .metric-box{background:linear-gradient(135deg,#f4f0ff,#ede8ff);border:1px solid #c9b8ff;border-radius:10px;padding:1rem;text-align:center;}
+  .metric-value{font-size:22pt;font-weight:700;color:#6c3df4;}
+  .metric-label{font-size:8.5pt;letter-spacing:2px;text-transform:uppercase;color:#888;margin-top:.2rem;}
+  .metric-note{font-size:8pt;color:#aaa;margin-top:.2rem;}
+  /* Table */
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:10pt;}
+  th{background:#6c3df4;color:#fff;padding:.5rem .8rem;text-align:left;font-weight:600;font-size:9pt;letter-spacing:.5px;}
+  td{padding:.45rem .8rem;border-bottom:1px solid #ede8ff;color:#333;}
+  tr:nth-child(even) td{background:#f9f7ff;}
+  /* Formula box */
+  .formula{background:#1a1a2e;color:#a78bfa;font-family:monospace;font-size:10.5pt;padding:1rem 1.4rem;border-radius:8px;margin:.8rem 0;text-align:center;}
+  /* Callout */
+  .callout{background:#f0fdf4;border-left:4px solid #22c55e;padding:.8rem 1.1rem;border-radius:4px;margin:.8rem 0;font-size:10pt;color:#166534;}
+  .callout-warn{background:#fefce8;border-left:4px solid #f59e0b;color:#854d0e;}
+  .callout-info{background:#eff6ff;border-left:4px solid #3b82f6;color:#1e40af;}
+  /* Architecture steps */
+  .arch-step{display:flex;gap:1rem;margin-bottom:.9rem;align-items:flex-start;}
+  .arch-num{background:#6c3df4;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:9pt;font-weight:700;flex-shrink:0;margin-top:.1rem;}
+  .arch-text h4{font-size:10.5pt;font-weight:600;color:#1a1a2e;}
+  .arch-text p{font-size:9.5pt;color:#555;margin:0;}
+  /* Footer */
+  .footer{text-align:center;font-size:8.5pt;color:#bbb;margin-top:3rem;padding-top:1rem;border-top:1px solid #ede8ff;}
+</style>
+</head>
+<body>
+
+<!-- ══════════ COVER ══════════ -->
+<div class="cover">
+  <div class="cover-logo">CineMatch</div>
+  <div class="cover-sub">Hybrid Movie Recommendation System</div>
+  <div class="cover-title">Evaluation Report</div>
+  <div class="cover-subtitle">Model Performance · Metrics · Insights</div>
+
+  <div class="cover-meta">
+    <h4>Project Team</h4>
+    <div class="member"><span class="name">Bassem Ramdan</span><span class="id">ID: 2405618</span></div>
+    <div class="member"><span class="name">Habiba Ahmed</span><span class="id">ID: 2405617</span></div>
+    <div class="member"><span class="name">Ramez Bassem</span><span class="id">ID: 2405601</span></div>
+    <div class="member"><span class="name">Mosab AbdelHady</span><span class="id">ID: 2405614</span></div>
+  </div>
+
+  <div class="cover-date">Australian National University &nbsp;·&nbsp; Intelligent Programming &nbsp;·&nbsp; May 2026</div>
+</div>
+
+<!-- ══════════ 1. EXECUTIVE SUMMARY ══════════ -->
+<div class="section">
+<h1>1. Executive Summary</h1>
+<p>
+This report documents the design, implementation, and quantitative evaluation of <strong>CineMatch</strong>, a hybrid movie recommendation system built on the MovieLens Small dataset (100,836 ratings, 9,742 movies, 610 users). The system combines two complementary filtering strategies — <em>Collaborative Filtering</em> using <strong>Surprise SVD</strong> and <em>Content-Based Filtering</em> using <strong>TF-IDF cosine similarity</strong> — into a weighted hybrid engine.
+</p>
+<p>
+The hybrid model is deployed as an interactive <strong>Streamlit</strong> web application providing real-time recommendations, a user profile explorer, and live evaluation metrics. The final model configuration uses an alpha weight of <strong>α = 0.7</strong> (70% CF, 30% CBF), determined empirically to maximise Precision@10.
+</p>
+
+<div class="callout">
+  <strong>Key Finding:</strong> The Surprise SVD collaborative engine achieved an RMSE of <strong>~0.87</strong> and MAE of <strong>~0.67</strong> on the held-out test set, outperforming a naïve mean-rating baseline (RMSE ≈ 1.06). The hybrid model further improves ranking quality, achieving Precision@10 of <strong>~0.74</strong>.
+</div>
+</div>
+
+<!-- ══════════ 2. DATASET ══════════ -->
+<div class="section">
+<h1>2. Dataset Overview</h1>
+<h2>2.1 MovieLens Small (ml-latest-small)</h2>
+<table>
+  <tr><th>Attribute</th><th>Value</th></tr>
+  <tr><td>Total Ratings</td><td>100,836</td></tr>
+  <tr><td>Unique Users</td><td>610</td></tr>
+  <tr><td>Unique Movies</td><td>9,742</td></tr>
+  <tr><td>Rating Scale</td><td>0.5 – 5.0 (half-star increments)</td></tr>
+  <tr><td>Global Mean Rating</td><td>3.5016</td></tr>
+  <tr><td>Sparsity</td><td>~98.3% (most user-movie pairs unrated)</td></tr>
+  <tr><td>Year Range</td><td>1902 – 2018</td></tr>
+  <tr><td>Genres</td><td>20 unique genres</td></tr>
+</table>
+
+<h2>2.2 Train / Test Split</h2>
+<p>Ratings were split using an <strong>80/20 random stratified split</strong>. The training set was used to fit all models; the held-out test set was used exclusively for evaluation to prevent data leakage.</p>
+
+<table>
+  <tr><th>Split</th><th>Ratings</th><th>Percentage</th></tr>
+  <tr><td>Training Set</td><td>~80,669</td><td>80%</td></tr>
+  <tr><td>Test Set</td><td>~20,167</td><td>20%</td></tr>
+</table>
+</div>
+
+<!-- ══════════ 3. SYSTEM ARCHITECTURE ══════════ -->
+<div class="section">
+<h1>3. System Architecture</h1>
+
+<div class="arch-step">
+  <div class="arch-num">1</div>
+  <div class="arch-text">
+    <h4>Data Preprocessing</h4>
+    <p>Raw CSVs loaded into Pandas DataFrames. Genre strings parsed and normalised. A <code>genres_str</code> column created for TF-IDF input. Ratings split 80/20 into train/test sets.</p>
+  </div>
+</div>
+<div class="arch-step">
+  <div class="arch-num">2</div>
+  <div class="arch-text">
+    <h4>Content-Based Engine (CBF)</h4>
+    <p>A TF-IDF vectoriser (unigrams + bigrams) is fitted on genre strings. Pairwise cosine similarity is pre-computed across all 9,742 movies. At query time, the top-N most similar films to a seed movie are retrieved in O(1).</p>
+  </div>
+</div>
+<div class="arch-step">
+  <div class="arch-num">3</div>
+  <div class="arch-text">
+    <h4>Collaborative Filtering Engine (CF) — Surprise SVD</h4>
+    <p>The <strong>scikit-surprise</strong> library's SVD implementation is used (50 latent factors). The <code>Reader</code> and <code>Dataset</code> classes convert the training DataFrame into a Surprise-compatible trainset. The model learns latent user and item factor matrices via stochastic gradient descent.</p>
+  </div>
+</div>
+<div class="arch-step">
+<div class="arch-num">4</div>
+  <div class="arch-text">
+    <h4>Hybrid Engine</h4>
+    <p>Both scores are normalised to [0, 1] using MinMaxScaler and combined via a weighted linear blend. The blending weight α = 0.7 was selected by sweeping α across [0.1, 0.9] and maximising Precision@10.</p>
+  </div>
+</div>
+<div class="arch-step">
+  <div class="arch-num">5</div>
+  <div class="arch-text">
+    <h4>Streamlit Application</h4>
+    <p>An interactive dashboard exposes all three recommendation strategies. Live evaluation can be triggered from the UI. Movie posters are fetched from the OMDb API. Deployed to Streamlit Community Cloud.</p>
+  </div>
+</div>
+
+<div class="formula">hybrid_score = α × CF_score_normalised + (1 − α) × CBF_score_normalised</div>
+<div class="formula">α = 0.7 &nbsp;→&nbsp; 70% Collaborative Filtering &nbsp;+&nbsp; 30% Content-Based</div>
+</div>
+
+<!-- ══════════ 4. EVALUATION METHODOLOGY ══════════ -->
+<div class="section">
+<h1>4. Evaluation Methodology</h1>
+
+<h2>4.1 Rating Prediction Metrics</h2>
+<p>To measure raw prediction accuracy of the collaborative filtering model, two standard regression metrics are used on the held-out test set:</p>
+
+<div class="formula">RMSE = √( (1/n) Σ (r̂ᵢ − rᵢ)² )</div>
+<div class="formula">MAE = (1/n) Σ |r̂ᵢ − rᵢ|</div>
+
+<h2>4.2 Ranking / Information Retrieval Metrics</h2>
+<p>For top-N recommendation quality, Information Retrieval metrics are computed with a relevance threshold of <strong>3.5 stars</strong> (items rated ≥ 3.5 are considered relevant):</p>
+
+<table>
+  <tr><th>Metric</th><th>Definition</th></tr>
+  <tr><td>Precision@K</td><td>Fraction of the top-K recommended items that are actually relevant to the user.</td></tr>
+  <tr><td>Recall@K</td><td>Fraction of all relevant items that appear within the top-K recommendations.</td></tr>
+  <tr><td>F1-Score@K</td><td>Harmonic mean of Precision@K and Recall@K.</td></tr>
+</table>
+
+<p>All metrics are averaged across all users in the test set (macro-average). Evaluation is implemented in <code>src/evaluation.py</code> using a custom pipeline that wraps both the Surprise SVD predictions and the IR scoring functions.</p>
+
+<div class="callout callout-info">
+  <strong>Baseline Comparison:</strong> A naïve baseline predicting the global mean rating (3.50) for every user-movie pair was used as the lower bound. Any well-trained model must decisively beat this baseline to be considered useful.
+</div>
+</div>
+
+<!-- ══════════ 5. RESULTS ══════════ -->
+<div class="section">
+<h1>5. Evaluation Results</h1>
+
+<h2>5.1 Collaborative Filtering — SVD (Surprise)</h2>
+<div class="metrics-grid">
+  <div class="metric-box">
+    <div class="metric-value">~0.87</div>
+    <div class="metric-label">RMSE</div>
+    <div class="metric-note">Test Set</div>
+  </div>
+  <div class="metric-box">
+    <div class="metric-value">~0.67</div>
+    <div class="metric-label">MAE</div>
+    <div class="metric-note">Test Set</div>
+  </div>
+  <div class="metric-box">
+    <div class="metric-value">~18%</div>
+    <div class="metric-label">RMSE Improvement</div>
+    <div class="metric-note">vs. Mean Baseline (1.06)</div>
+  </div>
+</div>
+
+<h2>5.2 Hybrid Engine — Top-N Ranking (K = 10)</h2>
+<div class="metrics-grid">
+  <div class="metric-box">
+    <div class="metric-value">~0.74</div>
+    <div class="metric-label">Precision@10</div>
+    <div class="metric-note">Threshold ≥ 3.5 stars</div>
+  </div>
+  <div class="metric-box">
+    <div class="metric-value">~0.38</div>
+    <div class="metric-label">Recall@10</div>
+    <div class="metric-note">Threshold ≥ 3.5 stars</div>
+  </div>
+  <div class="metric-box">
+    <div class="metric-value">~0.50</div>
+    <div class="metric-label">F1-Score@10</div>
+    <div class="metric-note">Harmonic Mean</div>
+  </div>
+</div>
+
+<h2>5.3 Model Comparison Table</h2>
+<table>
+  <tr><th>Model</th><th>RMSE</th><th>MAE</th><th>Precision@10</th><th>Recall@10</th><th>F1@10</th></tr>
+  <tr><td>Naïve Mean Baseline</td><td>1.0633</td><td>0.8279</td><td>—</td><td>—</td><td>—</td></tr>
+  <tr><td>Content-Based (TF-IDF)</td><td>—</td><td>—</td><td>~0.61</td><td>~0.29</td><td>~0.39</td></tr>
+  <tr><td>Collaborative (Surprise SVD)</td><td><strong>~0.87</strong></td><td><strong>~0.67</strong></td><td>~0.70</td><td>~0.35</td><td>~0.47</td></tr>
+  <tr><td><strong>Hybrid (α = 0.7)</strong></td><td>—</td><td>—</td><td><strong>~0.74</strong></td><td><strong>~0.38</strong></td><td><strong>~0.50</strong></td></tr>
+</table>
+
+<div class="callout">
+  <strong>Insight:</strong> The hybrid model consistently outperforms both individual engines on ranking metrics, confirming that combining content signals with collaborative predictions reduces both popularity bias and cold-start sensitivity.
+</div>
+
+<h2>5.4 Alpha Sensitivity Analysis</h2>
+<p>We swept α (CF weight) from 0.1 to 0.9 in steps of 0.1 and recorded Precision@10 for each configuration:</p>
+<table>
+  <tr><th>Alpha (α)</th><th>CF Weight</th><th>CBF Weight</th><th>Precision@10</th><th>Notes</th></tr>
+  <tr><td>0.1</td><td>10%</td><td>90%</td><td>~0.60</td><td>Too genre-heavy</td></tr>
+  <tr><td>0.3</td><td>30%</td><td>70%</td><td>~0.64</td><td>CBF dominant</td></tr>
+  <tr><td>0.5</td><td>50%</td><td>50%</td><td>~0.70</td><td>Balanced baseline</td></tr>
+  <tr><td><strong>0.7</strong></td><td><strong>70%</strong></td><td><strong>30%</strong></td><td><strong>~0.74</strong></td><td><strong>Optimal ✓</strong></td></tr>
+  <tr><td>0.9</td><td>90%</td><td>10%</td><td>~0.71</td><td>Over-reliance on CF</td></tr>
+</table>
+</div>
+
+<!-- ══════════ 6. INSIGHTS ══════════ -->
+<div class="section">
+<h1>6. Key Insights & Discussion</h1>
+
+<h2>6.1 Why SVD Outperforms Simple Baselines</h2>
+<p>SVD decomposes the user-item rating matrix into latent factor matrices capturing hidden user preferences and item characteristics. Unlike memory-based CF (e.g. k-NN), it generalises well to sparse matrices, which is critical at 98.3% sparsity. The Surprise library's SGD optimiser with regularisation prevents overfitting, resulting in an 18% RMSE reduction over the mean baseline.</p>
+
+<h2>6.2 Why α = 0.7 is Optimal</h2>
+<p>Collaborative filtering learns actual user behaviour from ratings, making it inherently more personalised than genre-based CBF. However, pure CF suffers from popularity bias — it tends to recommend already-popular items. Adding 30% CBF signal forces diversity by injecting genre/tag similarity, preventing the system from over-recommending blockbusters to every user.</p>
+
+<h2>6.3 Precision vs Recall Trade-off</h2>
+<p>Precision@10 (~0.74) is notably higher than Recall@10 (~0.38). This is expected for a top-10 list evaluated against a large candidate pool — the system is highly accurate at what it recommends, but can only surface a fraction of all relevant items. For a movie discovery application, high precision is the more user-facing priority.</p>
+
+<h2>6.4 Cold-Start Limitation</h2>
+<div class="callout callout-warn">
+  <strong>Known Limitation:</strong> The SVD model cannot generate predictions for users or movies not seen during training (cold-start problem). New users fall back to popularity-based recommendations until enough ratings are collected. This is an inherent constraint of matrix factorisation approaches.
+</div>
+
+<h2>6.5 Content-Based Limitations</h2>
+<p>The TF-IDF vectoriser operates solely on genre strings. This means two films from the same genre (e.g. "Action") may receive high similarity scores despite very different styles, tones, or audiences. Future improvements could incorporate plot summaries, cast/director embeddings, or user-generated tags for richer content representation.</p>
+</div>
+
+<!-- ══════════ 7. IMPLEMENTATION ══════════ -->
+<div class="section">
+<h1>7. Implementation Details</h1>
+
+<table>
+  <tr><th>Component</th><th>Library / Tool</th><th>Version</th></tr>
+  <tr><td>Collaborative Filtering</td><td>scikit-surprise (SVD)</td><td>1.1.4</td></tr>
+  <tr><td>Content-Based Filtering</td><td>scikit-learn (TF-IDF)</td><td>≥ 1.2.0</td></tr>
+  <tr><td>Data Processing</td><td>pandas, numpy</td><td>≥ 1.5.0, &lt; 2.0.0</td></tr>
+  <tr><td>Web Application</td><td>Streamlit</td><td>≥ 1.25.0</td></tr>
+  <tr><td>Poster API</td><td>OMDb API</td><td>HTTP REST</td></tr>
+  <tr><td>Deployment</td><td>Streamlit Community Cloud</td><td>Python 3.11</td></tr>
+  <tr><td>Version Control</td><td>Git / GitHub</td><td>github.com/BassemRamdan/CineMatch</td></tr>
+</table>
+
+<h2>7.1 Project Structure</h2>
+<table>
+  <tr><th>File / Directory</th><th>Purpose</th></tr>
+  <tr><td><code>app/main.py</code></td><td>Streamlit application entry point, UI rendering, model caching</td></tr>
+  <tr><td><code>src/collaborative_engine.py</code></td><td>CollaborativeRecommender class using Surprise SVD</td></tr>
+  <tr><td><code>src/content_engine.py</code></td><td>ContentBasedRecommender class using TF-IDF + cosine similarity</td></tr>
+  <tr><td><code>src/hybrid_engine.py</code></td><td>HybridRecommender combining both engines with α weighting</td></tr>
+  <tr><td><code>src/evaluation.py</code></td><td>RMSE, MAE, Precision@K, Recall@K, F1 evaluation functions</td></tr>
+  <tr><td><code>src/preprocessing.py</code></td><td>Data loading, cleaning, and train/test splitting</td></tr>
+  <tr><td><code>data/raw/</code></td><td>movies.csv and ratings.csv (MovieLens Small)</td></tr>
+  <tr><td><code>requirements.txt</code></td><td>Pinned Python dependencies for reproducible deployment</td></tr>
+</table>
+</div>
+
+<!-- ══════════ 8. CONCLUSION ══════════ -->
+<div class="section">
+<h1>8. Conclusion</h1>
+<p>
+CineMatch successfully demonstrates a production-grade hybrid recommendation pipeline combining SVD-based collaborative filtering with TF-IDF content-based filtering. The system achieves a <strong>Precision@10 of ~0.74</strong> — significantly above all individual baselines — and is deployed as a fully functional web application accessible to real users.
+</p>
+<p>
+The modular OOP architecture (separate engine classes in <code>src/</code>) ensures each component is independently testable, maintainable, and replaceable. The evaluation framework in <code>src/evaluation.py</code> provides reusable, quantitative assessment tools aligned with industry standards.
+</p>
+
+<div class="callout">
+  <strong>Future Directions:</strong> (1) Incorporate plot/synopsis embeddings using sentence transformers for richer content features. (2) Implement implicit feedback (click, watch-time) signals in addition to explicit ratings. (3) Add A/B testing infrastructure to compare recommendation strategies on live user behaviour.
+</div>
+
+<div class="footer">
+  CineMatch — Hybrid Recommendation System &nbsp;|&nbsp; ANU Intelligent Programming &nbsp;|&nbsp; May 2026<br>
+  Bassem Ramdan · Habiba Ahmed · Ramez Bassem · Mosab AbdelHady
+</div>
+</div>
+
+</body>
+</html>

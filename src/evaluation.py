@@ -4,13 +4,6 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 from collections import defaultdict
 
 def evaluate_collaborative_model(model, test_df):
-    """
-    Evaluate the collaborative filtering model using RMSE and MAE.
-    
-    Args:
-        model: Fitted CollaborativeRecommender instance
-        test_df: Test dataframe with 'userId', 'movieId', 'rating'
-    """
     predictions = []
     y_true = []
     y_pred = []
@@ -39,9 +32,6 @@ def evaluate_collaborative_model(model, test_df):
     return {"RMSE": rmse, "MAE": mae, "predictions": predictions}
 
 def precision_recall_at_k(predictions, k=10, threshold=3.5):
-    """
-    Return precision and recall at k metrics for each user.
-    """
     user_est_true = defaultdict(list)
     for uid, _, true_r, est, _ in predictions:
         user_est_true[uid].append((est, true_r))
@@ -63,10 +53,10 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5):
         n_rel_and_rec_k = sum(((true_r >= threshold) and (est >= threshold))
                               for (est, true_r) in user_ratings[:k])
 
-        # Precision@K: Proportion of recommended items that are relevant
+        # Precision: Proportion of recommended items that are relevant
         precisions[uid] = n_rel_and_rec_k / n_rec_k if n_rec_k != 0 else 0
 
-        # Recall@K: Proportion of relevant items that are recommended
+        # Recall: Proportion of relevant items that are recommended
         recalls[uid] = n_rel_and_rec_k / n_rel if n_rel != 0 else 0
 
     mean_precision = sum(prec for prec in precisions.values()) / len(precisions) if precisions else 0
