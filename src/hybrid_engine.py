@@ -19,7 +19,7 @@ class HybridRecommender:
             return None # Movie not found
             
         idx = matches.index[0]
-        target_movie_id = self.content_model.movies_df.iloc[idx]['movieId']
+        target_title = matches.iloc[0]["title"].lower()
         
         # 1. Get all similarity scores
         sim_scores = list(enumerate(self.content_model.cosine_sim[idx]))
@@ -27,6 +27,10 @@ class HybridRecommender:
         # Build dataframe for content scores
         content_df = pd.DataFrame(sim_scores, columns=['idx', 'similarity'])
         content_df['movieId'] = self.content_model.movies_df.iloc[content_df['idx']]['movieId'].values
+        content_df['title'] = self.content_model.movies_df.iloc[content_df['idx']]['title'].values
+        
+        # Filter out identical titles from content_df immediately to prevent them from showing up
+        content_df = content_df[content_df['title'].str.lower() != target_title]
         
         # Normalize similarity scores (0 to 1)
         scaler = MinMaxScaler()
@@ -35,11 +39,11 @@ class HybridRecommender:
         # 2. Get Collaborative Predictions for all these movies for the given user
         user_rated_raw_ids = self.collab_model.user_rated.get(user_id, set())
 
-        # Predict ratings for all movies except the ones user already rated and the target movie
+        # Predict ratings for all movies except the ones user already rated
         predictions = []
         for _, row in content_df.iterrows():
             m_id = row['movieId']
-            if m_id not in user_rated_raw_ids and m_id != target_movie_id:
+            if m_id not in user_rated_raw_ids:
                 est_rating = self.collab_model.predict(user_id, m_id)
                 predictions.append({'movieId': m_id, 'est_rating': est_rating})
                 

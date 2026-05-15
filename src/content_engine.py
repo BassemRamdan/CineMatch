@@ -39,17 +39,24 @@ class ContentBasedRecommender:
             return None
         
         idx = matches.index[0]
+        target_title = matches.iloc[0]["title"].lower()
         
         sim_scores = list(enumerate(self.cosine_sim[idx]))
         sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-        # Skip the first one since it's the movie itself
-        sim_scores = sim_scores[1:top_n+1]
         
-        movie_indices = [i[0] for i in sim_scores]
+        # Explicitly filter out the selected movie (and any duplicates sharing the same title)
+        movie_indices = []
+        similarities = []
+        for i, score in sim_scores:
+            if self.movies_df.iloc[i]["title"].lower() != target_title:
+                movie_indices.append(i)
+                similarities.append(score)
+            if len(movie_indices) == top_n:
+                break
         
         # Return dataframe of recommendations with similarity score
         recs = self.movies_df.iloc[movie_indices].copy()
-        recs['similarity'] = [i[1] for i in sim_scores]
+        recs['similarity'] = similarities
         
         return recs[["movieId", "title", "genres", "similarity"]]
 
