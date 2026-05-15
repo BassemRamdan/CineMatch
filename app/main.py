@@ -595,7 +595,7 @@ def render_hybrid():
                 </div>
                 <div style="text-align:center; padding-left:2rem; border-left:1px dashed rgba(255,255,255,0.1);">
                     <div style="font-size:0.8rem; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Final Hybrid Score</div>
-                    <div style="font-size:3.5rem; font-weight:800; color:#f472b6; line-height:1; text-shadow: 0 0 20px rgba(244,114,182,0.4);">{hy_score:.2f}</div>
+                    <div style="font-size:3.5rem; font-weight:800; color:#f472b6; line-height:1; text-shadow: 0 0 20px rgba(244,114,182,0.4);">{hy_score*100:.0f}%</div>
                     <div style="font-size:0.7rem; color:rgba(255,255,255,0.3); margin-top:0.5rem;">Weighted 70% CF / 30% Content</div>
                 </div>
             </div>
@@ -618,15 +618,16 @@ def render_analytics():
         metrics = get_metrics(collab_model, test)
 
     items = [
-        ("RMSE",       metrics["RMSE"],         "#ef4444", "Prediction error",    "Lower is better"),
-        ("MAE",         metrics["MAE"],           "#f97316", "Absolute error",      "Lower is better"),
-        ("Precision",   metrics["Precision@K"],   "#22c55e", "Relevant in top 10",  "Higher is better"),
-        ("Recall",      metrics["Recall@K"],      "#3b82f6", "Coverage of relevant","Higher is better"),
-        ("F1-Score",    metrics["F1-Score"],      "#a78bfa", "Harmonic mean",       "P-R balance"),
+        ("RMSE",       metrics["RMSE"],         "#ef4444", "Prediction error",    "Lower is better", False),
+        ("MAE",         metrics["MAE"],           "#f97316", "Absolute error",      "Lower is better", False),
+        ("Precision",   metrics["Precision@K"],   "#22c55e", "Relevant in top 10",  "Higher is better", True),
+        ("Recall",      metrics["Recall@K"],      "#3b82f6", "Coverage of relevant","Higher is better", True),
+        ("F1-Score",    metrics["F1-Score"],      "#a78bfa", "Harmonic mean",       "P-R balance", True),
     ]
 
     cols = st.columns(5, gap="medium")
-    for col, (name, val, color, subtitle, hint) in zip(cols, items):
+    for col, (name, val, color, subtitle, hint, is_pct) in zip(cols, items):
+        display_val = f"{val*100:.1f}%" if is_pct else f"{val:.4f}"
         with col:
             st.markdown(f"""
             <div style="
@@ -636,7 +637,7 @@ def render_analytics():
                 text-align: center;
                 ">
                 <div style="width:42px;height:4px;background:{color};border-radius:2px;margin:0 auto 1rem;"></div>
-                <div style="font-size:2rem;font-weight:800;color:{color};line-height:1;">{val:.4f}</div>
+                <div style="font-size:2rem;font-weight:800;color:{color};line-height:1;">{display_val}</div>
                 <div style="font-size:0.82rem;font-weight:700;color:#e2e8f0;margin:0.5rem 0 0.2rem;">{name}</div>
                 <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);">{subtitle}</div>
                 <div style="margin-top:0.7rem;font-size:0.65rem;background:{color}22;color:{color};
