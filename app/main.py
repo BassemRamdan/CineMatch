@@ -420,7 +420,7 @@ def render_home():
         st.markdown(f'<div style="font-size:1.4rem;font-weight:700;color:#e2e8f0;margin-bottom:0.5rem;">🔥 Top Picks for You</div>', unsafe_allow_html=True)
         st.markdown(f'<div style="font-size:0.9rem;color:rgba(255,255,255,0.5);margin-bottom:1.5rem;">Filtered by: {", ".join(current_mood)}</div>', unsafe_allow_html=True)
         # Check if the movie's genre_list contains ANY of the selected mood genres
-        mask = trending_movies['genre_list'].apply(lambda x: any(g in x for g in current_mood) if isinstance(x, list) else False)
+        mask = trending_movies['genre_list'].apply(lambda x: any(g in x for g in current_mood) if isinstance(x, (list, tuple)) else False)
         trending_movies = trending_movies[mask]
     else:
         st.markdown('<div style="font-size:1.4rem;font-weight:700;color:#e2e8f0;margin-bottom:1.5rem;">🔥 Trending Now</div>', unsafe_allow_html=True)
