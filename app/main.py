@@ -617,35 +617,49 @@ def render_analytics():
             return run_full_evaluation(_model, _test)
         metrics = get_metrics(collab_model, test)
 
-    items = [
-        ("RMSE",       metrics["RMSE"],         "#ef4444", "Prediction error",    "Lower is better", False),
-        ("MAE",         metrics["MAE"],           "#f97316", "Absolute error",      "Lower is better", False),
+    top_items = [
         ("Precision",   metrics["Precision@K"],   "#22c55e", "Relevant in top 10",  "Higher is better", True),
         ("Recall",      metrics["Recall@K"],      "#3b82f6", "Coverage of relevant","Higher is better", True),
         ("F1-Score",    metrics["F1-Score"],      "#a78bfa", "Harmonic mean",       "P-R balance", True),
     ]
+    
+    bottom_items = [
+        ("RMSE",       metrics["RMSE"],         "#ef4444", "Prediction error",    "Lower is better", False),
+        ("MAE",         metrics["MAE"],           "#f97316", "Absolute error",      "Lower is better", False),
+    ]
 
-    cols = st.columns(5, gap="medium")
-    for col, (name, val, color, subtitle, hint, is_pct) in zip(cols, items):
+    def render_card(name, val, color, subtitle, hint, is_pct):
         display_val = f"{val*100:.1f}%" if is_pct else f"{val:.4f}"
-        with col:
-            st.markdown(f"""
-            <div style="
-                background: rgba(255,255,255,0.03);
-                border: 1px solid {color}33;
-                border-radius: 16px; padding: 1.4rem 1rem;
-                text-align: center;
-                ">
-                <div style="width:42px;height:4px;background:{color};border-radius:2px;margin:0 auto 1rem;"></div>
-                <div style="font-size:2rem;font-weight:800;color:{color};line-height:1;">{display_val}</div>
-                <div style="font-size:0.82rem;font-weight:700;color:#e2e8f0;margin:0.5rem 0 0.2rem;">{name}</div>
-                <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);">{subtitle}</div>
-                <div style="margin-top:0.7rem;font-size:0.65rem;background:{color}22;color:{color};
-                    border-radius:50px;padding:2px 10px;display:inline-block;font-weight:600;">
-                    {hint}
-                </div>
+        st.markdown(f"""
+        <div style="
+            background: rgba(255,255,255,0.03);
+            border: 1px solid {color}33;
+            border-radius: 16px; padding: 1.4rem 1rem;
+            text-align: center;
+            ">
+            <div style="width:42px;height:4px;background:{color};border-radius:2px;margin:0 auto 1rem;"></div>
+            <div style="font-size:2rem;font-weight:800;color:{color};line-height:1;">{display_val}</div>
+            <div style="font-size:0.82rem;font-weight:700;color:#e2e8f0;margin:0.5rem 0 0.2rem;">{name}</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);">{subtitle}</div>
+            <div style="margin-top:0.7rem;font-size:0.65rem;background:{color}22;color:{color};
+                border-radius:50px;padding:2px 10px;display:inline-block;font-weight:600;">
+                {hint}
             </div>
-            """, unsafe_allow_html=True)
+        </div>
+        """, unsafe_allow_html=True)
+
+    cols_top = st.columns(3, gap="medium")
+    for col, item in zip(cols_top, top_items):
+        with col:
+            render_card(*item)
+            
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    cols_bottom = st.columns([1, 2, 2, 1], gap="medium")
+    with cols_bottom[1]:
+        render_card(*bottom_items[0])
+    with cols_bottom[2]:
+        render_card(*bottom_items[1])
             
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown('<div style="font-size:1.1rem;font-weight:700;color:#e2e8f0;margin-bottom:1rem;">Architecture Summary</div>', unsafe_allow_html=True)
