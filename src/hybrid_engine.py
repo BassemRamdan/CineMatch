@@ -28,6 +28,7 @@ class HybridRecommender:
         content_df = pd.DataFrame(sim_scores, columns=['idx', 'similarity'])
         content_df['movieId'] = self.content_model.movies_df.iloc[content_df['idx']]['movieId'].values
         content_df['title'] = self.content_model.movies_df.iloc[content_df['idx']]['title'].values
+        content_df['genres'] = self.content_model.movies_df.iloc[content_df['idx']]['genres'].values
         
         # Filter out identical titles from content_df immediately to prevent them from showing up
         content_df = content_df[content_df['title'].str.lower() != target_title]
@@ -62,6 +63,4 @@ class HybridRecommender:
         # 4. Sort and return top_n
         hybrid_df = hybrid_df.sort_values(by='hybrid_score', ascending=False).head(top_n)
         
-        # Join with movie metadata
-        results = pd.merge(hybrid_df, self.content_model.movies_df, on='movieId')
-        return results[['movieId', 'title', 'genres', 'similarity', 'est_rating', 'hybrid_score']]
+        return hybrid_df[['movieId', 'title', 'genres', 'similarity', 'est_rating', 'hybrid_score']]
